@@ -5,6 +5,11 @@ block content
   p Welcome to #{title}
 
     form(action="login/", method="post")
+      div
+        label(for="username") Username:
         input#username(type="text", name="username")
+      div
+        label(for="password") Password:
         input#password(type="password", name="password")
-        button(type="submit") login
+
+      button(type="submit") login
