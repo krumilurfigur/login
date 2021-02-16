@@ -30,41 +30,36 @@ router.post('/',
  body('username').notEmpty().trim(),
  body('password').notEmpty(),
  async function(req, res, next) {
-
     // Finds the validation errors in this request and wraps them in an object with handy functions
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      res.render('login',{ errors: errors.array()});
+      // return res.status(400).json({ errors: errors.array() });
     }
 
   const username = req.body.username;
   const password = req.body.password;
 
-  if (username && password) {
-    //check if user exists
-    try {
-      const sql = 'SELECT password FROM users WHERE name = ?';
-      const result = await query(sql, username);
+  try {
+    const sql = 'SELECT password FROM users WHERE name = ?';
+    const result = await query(sql, username);
 
-      if(result.length > 0) {
-        bcrypt.compare(password, result[0].password, function(err, result) {
-          if (result == true) {
-            req.session.loggedin = true;
-            req.session.username = username;
-            res.redirect('/topsecret');
-          } else {
-            res.render('login',{ error: 'wrong username or password'});
-          }
-        });
-      } else {
-        res.render('login',{ error: 'wrong username or password'});
-      }
-    } catch (e) {
-      next(e);
-      console.error(e);
+    if(result.length > 0) {
+      bcrypt.compare(password, result[0].password, function(err, result) {
+        if (result == true) {
+          req.session.loggedin = true;
+          req.session.username = username;
+          res.redirect('/topsecret');
+        } else {
+          res.render('login',{ error: 'wrong username or password'});
+        }
+      });
+    } else {
+      res.render('login',{ error: 'wrong username or password'});
     }
-  } else {
-    res.render('login',{ error: 'wrong username or password'});
+  } catch (e) {
+    next(e);
+    console.error(e);
   }
 });
 

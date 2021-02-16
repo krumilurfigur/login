@@ -4,8 +4,10 @@ block content
   h1= title
   p Welcome to #{title}
 
-  if error
-    p= error
+  if errors
+    each error in errors
+      p= error.param
+      p= error.msg
 
 
   form(action="/login", method="post")
