@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const bcrypt = require('bcrypt');
 const {query} = require('../models/db');
+const { body, validationResult } = require('express-validator');
 
 /* GET login form */
 router.get('/', function(req, res, next) {
@@ -25,7 +26,16 @@ router.get('/kryptan/:pwd', function(req, res, next) {
 });
 
 /* POST login */
-router.post('/', async function(req, res, next) {
+router.post('/',
+ body('username').notEmpty().trim(),
+ body('password').notEmpty(),
+ async function(req, res, next) {
+
+    // Finds the validation errors in this request and wraps them in an object with handy functions
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
 
   const username = req.body.username;
   const password = req.body.password;
