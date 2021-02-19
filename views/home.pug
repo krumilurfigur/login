@@ -1,5 +1,12 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  main.container
+    h1 Welcome back user.  
+
+    form(action="/logout", method="post")
+      button(type="submit") logout
+    
+
+
+    h2 change password
