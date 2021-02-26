@@ -30,8 +30,15 @@ module.exports.store = async function(req, res, next) {
         }
 
       } catch (e) {
-        next(e);
-        console.error(e);
+        console.table(e);
+        if (e.errno === 1062) {
+          return res.render('register', {
+            username: e.sqlMessage.includes('users.name') ? 'Duplicate entry' : null,
+            email: e.sqlMessage.includes('users.email') ? 'Duplicate entry' : null,
+          });
+        } else {
+          next(e);
+        }
       }
     });
 };
